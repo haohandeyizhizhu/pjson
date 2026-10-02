@@ -146,3 +146,81 @@ void pjson_free(pjson * p)
     p->token_capacity = 0;
     p->token_count = 0;
 }
+
+/**
+ * @param p 指向pjson对象的指针
+ * @param t 要追加的token
+ * @return 存放错误信息的结构体
+ * @brief 向pjson的token_arr动态数组追加元素，并实现自动扩容
+ */
+pjson_err pjson_token_arr_append(pjson * p, token t)
+{
+    pjson_err ret;
+
+    if (!p){ret.code = 100; ret.msg = "Err: Pointer is NULL"; return ret; }
+
+    if (p->token_arr == NULL && (p->token_capacity || p->token_count)){
+        ret.code = 100;
+        ret.msg = "Err: Empty arr shouldn't have items";
+        return ret;}
+
+    if (p->token_arr != NULL && p->token_capacity == 0){   
+        ret.code = 100;
+        ret.msg = "Err: Failed to find the capacity of a existed arr.";
+        return ret;
+    }
+
+    if (p->token_arr == NULL)//空数组
+    {
+        p->token_arr = malloc(sizeof(token) * PJSON_TOKEN_ARR_INIT_CAP);
+        if (!p->token_arr){
+            ret.code = 100;
+            ret.msg = "Err: Failed to allocate memory";
+            return ret;
+        }
+        p->token_capacity = PJSON_TOKEN_ARR_INIT_CAP;
+        p->token_count += 1;
+        p->token_arr[0] = t;
+
+        ret.code = 0;
+        ret.msg = "No error detected.";
+        return ret;
+    }
+    else //已有元素
+    {
+        if (p->token_count < p->token_capacity) //没有满
+        {
+            p->token_arr[p->token_count] = t;
+            p->token_count += 1;
+
+            ret.code = 0;
+            ret.msg = "No error detected.";
+            return ret;
+        }
+        else if (p->token_count == p->token_capacity) //数组已满
+        {
+            token * tmp = realloc(p->token_arr, 
+                p->token_capacity * PJSON_TOKEN_ARR_GROW_FACTOR * sizeof(token));
+            if (!tmp)
+            {
+                ret.code = 100;
+                ret.msg = "Err: Failed to reallocate memory";
+                return ret;
+            }
+            p->token_arr = tmp;
+            p->token_capacity *= PJSON_TOKEN_ARR_GROW_FACTOR;
+            p->token_arr[p->token_count] = t;
+            p->token_count += 1;
+
+            ret.code = 0;
+            ret.msg = "No error detected.";
+            return ret;
+        }
+        else //已有元素比总容量大，错误情况
+        {
+            ret.code = 100;
+            ret.msg = "Err: count above capacity.";
+            return ret;
+        }
+    }
+}

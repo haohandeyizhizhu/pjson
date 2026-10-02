@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define PJSON_TOKEN_ARR_INIT_CAP 8
+#define PJSON_TOKEN_ARR_GROW_FACTOR 2
+
 //数据结构
 
 typedef enum {
@@ -48,5 +51,7 @@ void pjson_init(pjson * p);
 pjson_err pjson_load_str(pjson * p, const char * str);
 pjson_err pjson_load_file(pjson * p, const char * path);
 void pjson_free(pjson * p);
+
+pjson_err pjson_token_arr_append(pjson * p, token t);
 
 #endif
