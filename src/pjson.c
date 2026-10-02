@@ -1,5 +1,7 @@
 #include "pjson.h"
 
+static int pjson_util_is_space(char c);
+
 /**
  * @param p 指向pjson对象的指针
  * @brief 初始化pjson对象
@@ -223,4 +225,14 @@ pjson_err pjson_token_arr_append(pjson * p, token t)
             return ret;
         }
     }
+}
+
+/**
+ * @param c 要判断的字符
+ * @return 是合法空白字符返回1，不是则返回0
+ * @brief 判断字符是否为合法的json空白字符
+ */
+static int pjson_util_is_space(char c)
+{
+    return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }

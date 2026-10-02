@@ -53,5 +53,10 @@ pjson_err pjson_load_file(pjson * p, const char * path);
 void pjson_free(pjson * p);
 
 pjson_err pjson_token_arr_append(pjson * p, token t);
+pjson_err pjson_lex(pjson * p);
+pjson_err pjson_lex_number(const char ** cursor);
+pjson_err pjson_lex_string(const char ** cursor);
+pjson_err pjson_lex_expect(const char ** cursor);
+pjson_err pjson_lex_skip_space(const char ** cursor);
 
 #endif
