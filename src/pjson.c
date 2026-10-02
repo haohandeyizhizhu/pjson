@@ -6,8 +6,12 @@
  */
 void pjson_init(pjson * p)
 {
-    if (p)
-        p->data = NULL;
+    if (!p) return;
+    p->data = NULL;
+    p->token_arr = NULL;
+    p->token_capacity = 0;
+    p->token_count = 0;
+        
 }
 
 /**
@@ -136,5 +140,9 @@ void pjson_free(pjson * p)
 {
     if (!p) return;
     free(p->data);
+    free(p->token_arr);
     p->data = NULL;
+    p->token_arr = NULL;
+    p->token_capacity = 0;
+    p->token_count = 0;
 }
