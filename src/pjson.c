@@ -14,7 +14,8 @@ void pjson_init(pjson * p)
  * @param p 指向pjson对象的指针
  * @param str 原始json字符串
  * @return 包含错误信息的pjson_err结构体
- * @brief 将str字符串的内容加载到psjon对象。
+ * @brief 将str字符串的内容加载到pjson对象。
+ * 调用前应确保使用pjson_init()进行初始化
  * 注意加载时会动态分配内存，调用该函数后应该调用pjson_free()函数释放内存
  */
 pjson_err pjson_load_str(pjson * p, const char * str)
@@ -49,6 +50,7 @@ pjson_err pjson_load_str(pjson * p, const char * str)
  * @param path 文件路径
  * @return 包含错误信息的pjson_err结构体
  * @brief 将path对应的json文件内容作为字符串，加载到pjson对象
+ * 调用前应确保使用pjson_init()进行初始化
  * 注意内存是动态分配的，调用后应该使用pjson_free()函数释放内存
  */
 pjson_err pjson_load_file(pjson * p, const char * path)
