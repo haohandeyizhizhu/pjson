@@ -57,6 +57,6 @@ pjson_err pjson_lex(pjson * p);
 pjson_err pjson_lex_number(const char ** cursor);
 pjson_err pjson_lex_string(const char ** cursor);
 pjson_err pjson_lex_expect(const char ** cursor);
-pjson_err pjson_lex_skip_space(const char ** cursor);
+void pjson_lex_skip_space(const char ** cursor);
 
 #endif

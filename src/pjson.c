@@ -227,6 +227,19 @@ pjson_err pjson_token_arr_append(pjson * p, token t)
     }
 }
 
+
+/**
+ * @param cursor 指向目标字符串指针的指针
+ * @brief 该函数接受指向待跳过字符串指针的指针，将目标字符串指针持续前移直到指向第一个非json合法空白字符
+ */
+void pjson_lex_skip_space(const char ** cursor)
+{
+    while (pjson_util_is_space(**cursor))
+    {
+        (*cursor)++;
+    }
+}
+
 /**
  * @param c 要判断的字符
  * @return 是合法空白字符返回1，不是则返回0
