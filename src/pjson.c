@@ -227,6 +227,71 @@ pjson_err pjson_token_arr_append(pjson * p, token t)
     }
 }
 
+pjson_err pjson_lex(pjson * p)
+{
+    pjson_err ret;
+    token t;
+
+    if (!p){ret.code = 100; ret.msg = "Err: Pointer is NULL."; return ret;}
+    if (!p->data){ret.code = 100; ret.msg = "Err: string not found."; return ret;}
+
+    const char * cursor = p->data;
+
+    while (1)
+    {
+        pjson_lex_skip_space(&cursor);
+        switch (*cursor)
+        {
+            case '{':
+                t.len = 1; t.start = cursor; t.type = TOKEN_LEFT_BRACE;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                cursor++;
+                break;
+            case '}':
+                t.len = 1; t.start = cursor; t.type = TOKEN_RIGHT_BRACE;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                cursor++;
+                break;
+            case '[':
+                t.len = 1; t.start = cursor; t.type = TOKEN_LEFT_BRACKET;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                cursor++;
+                break;
+            case ']':
+                t.len = 1; t.start = cursor; t.type = TOKEN_RIGHT_BRACKET;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                cursor++;
+                break;
+            case ',':
+                t.len = 1; t.start = cursor; t.type = TOKEN_COMMA;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                cursor++;
+                break;
+            case ':':
+                t.len = 1; t.start = cursor; t.type = TOKEN_COLON;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                cursor++;
+                break;
+            case '\0':
+                t.len = 0; t.start = cursor; t.type = TOKEN_EOF;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                ret.code = 0; ret.msg = "No error detected.";
+                return ret;
+            default:
+                ret.code = 100; ret.msg = "Err: Unknown token.";
+                return ret;
+        }
+    }
+
+
+}
 
 /**
  * @param cursor 指向目标字符串指针的指针
