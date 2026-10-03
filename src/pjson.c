@@ -231,6 +231,7 @@ pjson_err pjson_lex(pjson * p)
 {
     pjson_err ret;
     token t;
+    const char * s = NULL; //用于在匹配多字符token时，记录起点
 
     if (!p){ret.code = 100; ret.msg = "Err: Pointer is NULL."; return ret;}
     if (!p->data){ret.code = 100; ret.msg = "Err: string not found."; return ret;}
@@ -277,6 +278,30 @@ pjson_err pjson_lex(pjson * p)
                 ret = pjson_token_arr_append(p, t);
                 if (ret.code) return ret;
                 cursor++;
+                break;
+            case 't':
+                s = cursor;//存放token开始位置
+                ret = pjson_lex_expect(&cursor, "true");
+                if (ret.code) return ret;
+                t.len = 4; t.start = s; t.type = TOKEN_TRUE;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                break;
+            case 'f':
+                s = cursor;//存放token开始位置
+                ret = pjson_lex_expect(&cursor, "false");
+                if (ret.code) return ret;
+                t.len = 5; t.start = s; t.type = TOKEN_FALSE;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                break;
+            case 'n':
+                s = cursor;//存放token开始位置
+                ret = pjson_lex_expect(&cursor, "null");
+                if (ret.code) return ret;
+                t.len = 4; t.start = s; t.type = TOKEN_NULL;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
                 break;
             case '\0':
                 t.len = 0; t.start = cursor; t.type = TOKEN_EOF;
