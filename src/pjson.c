@@ -295,6 +295,37 @@ pjson_err pjson_lex(pjson * p)
 
 /**
  * @param cursor 指向目标字符串指针的指针
+ * @param str 预期匹配到的字符串
+ * @return 包含错误信息的结构体
+ * @brief 这个函数“期望”字符串*cursor从当前位置开始可以得到完整的str字符串，如果匹配成功，返回错误码0并将*cursor光标指向
+ * str子串后的下一个字节，如果匹配失败则直接返回错误码100，*cursor光标指向出错的位置
+ */
+pjson_err pjson_lex_expect(const char ** cursor, const char * str)
+{
+    pjson_err ret;
+
+    if (!str || !cursor){ret.code = 100; ret.msg = "Err: Pointer is NULL."; return ret;}
+    if (!*cursor){ret.code = 100; ret.msg = "Err: Pointer is NULL."; return ret;}
+
+    size_t len = strlen(str);
+    size_t i;
+    for (i = 0; i < len; i++)
+    {
+        if ((**cursor) != str[i] || (**cursor) == '\0')
+        {
+            ret.code = 100;
+            ret.msg = "Err: Failed to expect.";
+            return ret;
+        }
+        (*cursor)++;
+    }
+    ret.code = 0;
+    ret.msg = "No error detected.";
+    return ret;
+}
+
+/**
+ * @param cursor 指向目标字符串指针的指针
  * @brief 该函数接受指向待跳过字符串指针的指针，将目标字符串指针持续前移直到指向第一个非json合法空白字符
  */
 void pjson_lex_skip_space(const char ** cursor)
