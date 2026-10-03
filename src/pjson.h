@@ -12,12 +12,12 @@
 
 typedef enum {
     TOKEN_EOF = 0,
-    TOKEN_LEFT_BRACE,
-    TOKEN_RIGHT_BRACE,
-    TOKEN_LEFT_BRACKET,
-    TOKEN_RIGHT_BRACKET,
-    TOKEN_COLON,
-    TOKEN_COMMA,
+    TOKEN_LEFT_BRACE,       //'{'
+    TOKEN_RIGHT_BRACE,      //'}'
+    TOKEN_LEFT_BRACKET,     //'['
+    TOKEN_RIGHT_BRACKET,    //']'
+    TOKEN_COLON,            //':'
+    TOKEN_COMMA,            //','
     TOKEN_TRUE,
     TOKEN_FALSE,
     TOKEN_NULL,
