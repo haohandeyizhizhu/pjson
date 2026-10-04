@@ -390,6 +390,90 @@ pjson_err pjson_lex_number(const char ** cursor)
 }
 
 /**
+ * 
+ */
+pjson_err pjson_lex_string(const char ** cursor)
+{
+    pjson_err ret;
+    int is_excaping = 0; //是否处于转义状态
+
+    if (!cursor){ret.code = 100; ret.msg = "Err: Pointer is NULL"; return ret;}
+    if (!(*cursor))
+        {ret.code = 100; ret.msg = "Err: Pointer is NULL"; return ret;}
+    
+    /*确认第一个字符为双引号，并把光标移到其后第一个字符,开始主循环*/
+    if ((**cursor) != '"')
+        {ret.code = 100; ret.msg = "Err: String not begin with \"."; return ret;}
+    (*cursor)++;
+
+    while (1)
+    {
+        if (is_excaping)
+        {
+            if ((**cursor) == '"' || (**cursor) == '\\' || (**cursor) == '/' ||
+                (**cursor) == 'b' || (**cursor) == 'f' || (**cursor) == 'n' ||
+                (**cursor) == 'r' || (**cursor) == 't')
+            {
+                is_excaping = 0;
+                (*cursor)++;
+            }
+            else if ((**cursor) == 'u')
+            {
+                int legal = 1;
+                for (int i = 1; i <= 4; i++)
+                {
+                    if (!pjson_util_is_hex_number(*((*cursor) + i)))
+                    {
+                        legal = 0;
+                        break;
+                    }
+                }
+
+                if (!legal)
+                {
+                    ret.code = 100; ret.msg = "Err: Invalid escape sequence"; return ret;
+                }
+                else
+                {
+                    is_excaping = 0;
+                    (*cursor) += 5;
+                }
+            }
+            else
+            {
+                ret.code = 100; ret.msg = "Err: Invalid escape sequence"; return ret;
+            }
+        }
+        else
+        {
+            if ((**cursor) == '\0')
+            {
+                ret.code = 100; ret.msg = "Err: string not closed."; return ret;
+            }
+            else if ((unsigned char)(**cursor) < 0x20)
+            {
+                ret.code = 100; ret.msg = "Err: No raw control chars."; return ret;
+            }
+            else if ((**cursor) == '"')
+            {
+                (*cursor)++;
+                ret.code = 0; ret.msg = "No error detected."; return ret;
+            }
+            else if ((**cursor) == '\\')
+            {
+                is_excaping = 1;
+                (*cursor)++;
+            }
+            else
+            {
+                (*cursor)++;
+            }
+                
+        }
+    }
+}
+
+/**
  * @param cursor 指向目标字符串指针的指针
  * @param str 预期匹配到的字符串
  * @return 包含错误信息的结构体
