@@ -304,6 +304,15 @@ pjson_err pjson_lex(pjson * p)
                 ret = pjson_token_arr_append(p, t);
                 if (ret.code) return ret;
                 break;
+            case '-': case '0': case '1': case '2': case '3': case '4':
+            case '5': case '6': case '7': case '8': case '9':
+                s = cursor;
+                ret = pjson_lex_number(&cursor);
+                if (ret.code) return ret;
+                t.len = cursor - s; t.start = s; t.type = TOKEN_NUMBER;
+                ret = pjson_token_arr_append(p, t);
+                if (ret.code) return ret;
+                break;
             case '\0':
                 t.len = 0; t.start = cursor; t.type = TOKEN_EOF;
                 ret = pjson_token_arr_append(p, t);
