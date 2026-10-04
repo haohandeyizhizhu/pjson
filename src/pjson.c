@@ -442,11 +442,21 @@ static int pjson_util_is_space(char c)
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
 }
 
+/**
+ * @param c 要判断的字符
+ * @return 是数字0-9则返回1，不是则返回0
+ * @brief 判断字符是否为数字0-9
+ */
 static int pjson_util_is_number(char c)
 {
     return (c >= '0' && c <= '9');
 }
 
+/**
+ * @param c 要判断的字符
+ * @return 是十六进制数字0-F返回1，不是则返回0
+ * @brief 判断字符是否为十六进制数字，大小写均可
+ */
 static int pjson_util_is_hex_number(char c)
 {
     return ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') ||
