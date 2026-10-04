@@ -390,12 +390,15 @@ pjson_err pjson_lex_number(const char ** cursor)
 }
 
 /**
- * 
+ * @param cursor 指向目标字符串指针的指针
+ * @return 包含错误信息的结构体
+ * @brief 这个函数从从字符串*cursor开始的位置开始读取，期望得到一个合法json字符串，如果成功，*cursor最终指向
+ * 合法json字符串后的第一个字符，并返回错误码0，如果失败，返回错误码100，并“不”保证*cursor光标指向错误位置
  */
 pjson_err pjson_lex_string(const char ** cursor)
 {
     pjson_err ret;
-    int is_excaping = 0; //是否处于转义状态
+    int is_escaping = 0; //是否处于转义状态
 
     if (!cursor){ret.code = 100; ret.msg = "Err: Pointer is NULL"; return ret;}
     if (!(*cursor))
@@ -408,13 +411,13 @@ pjson_err pjson_lex_string(const char ** cursor)
 
     while (1)
     {
-        if (is_excaping)
+        if (is_escaping)
         {
             if ((**cursor) == '"' || (**cursor) == '\\' || (**cursor) == '/' ||
                 (**cursor) == 'b' || (**cursor) == 'f' || (**cursor) == 'n' ||
                 (**cursor) == 'r' || (**cursor) == 't')
             {
-                is_excaping = 0;
+                is_escaping = 0;
                 (*cursor)++;
             }
             else if ((**cursor) == 'u')
@@ -435,7 +438,7 @@ pjson_err pjson_lex_string(const char ** cursor)
                 }
                 else
                 {
-                    is_excaping = 0;
+                    is_escaping = 0;
                     (*cursor) += 5;
                 }
             }
@@ -461,7 +464,7 @@ pjson_err pjson_lex_string(const char ** cursor)
             }
             else if ((**cursor) == '\\')
             {
-                is_excaping = 1;
+                is_escaping = 1;
                 (*cursor)++;
             }
             else
