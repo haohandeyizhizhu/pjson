@@ -1,6 +1,8 @@
 #include "pjson.h"
 
 static int pjson_util_is_space(char c);
+static int pjson_util_is_number(char c);
+static int pjson_util_is_number_1_9(char c);
 
 /**
  * @param p 指向pjson对象的指针
@@ -369,4 +371,14 @@ void pjson_lex_skip_space(const char ** cursor)
 static int pjson_util_is_space(char c)
 {
     return c == ' ' || c == '\t' || c == '\n' || c == '\r';
+}
+
+static int pjson_util_is_number(char c)
+{
+    return (c >= '0' && c <= '9');
+}
+
+static int pjson_util_is_number_1_9(char c)
+{
+    return (c >= '1' && c <= '9');
 }
