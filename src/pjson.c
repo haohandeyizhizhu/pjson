@@ -2,6 +2,7 @@
 
 static int pjson_util_is_space(char c);
 static int pjson_util_is_number(char c);
+static int pjson_util_is_hex_number(char c);
 
 /**
  * @param p 指向pjson对象的指针
@@ -444,4 +445,10 @@ static int pjson_util_is_space(char c)
 static int pjson_util_is_number(char c)
 {
     return (c >= '0' && c <= '9');
+}
+
+static int pjson_util_is_hex_number(char c)
+{
+    return ((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') ||
+                (c >= 'A' && c <= 'F'));
 }
