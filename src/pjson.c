@@ -322,6 +322,66 @@ pjson_err pjson_lex(pjson * p)
 
 /**
  * @param cursor 指向目标字符串指针的指针
+ * @return 包含错误信息的结构体
+ * @brief 这个函数从从字符串*cursor开始的位置开始读取，期望得到一个合法json数字，如果成功，*cursor最终指向
+ * 合法json数字后的第一个字符，并返回错误码0，如果失败，返回错误码100，并“不”保证*cursor光标指向错误位置
+ */
+pjson_err pjson_lex_number(const char ** cursor)
+{
+    pjson_err ret;
+
+    if (!cursor){ret.code = 100; ret.msg = "Err: Pointer is NULL"; return ret;}
+    if (!(*cursor))
+        {ret.code = 100; ret.msg = "Err: Pointer is NULL"; return ret;}
+    
+    if ((**cursor) == '-') //跳过可能的负号
+        (*cursor)++;
+    
+    /*整数部分判断*/
+    if (!pjson_util_is_number(**cursor))
+        {ret.code = 100; ret.msg = "Err: Missing integer part"; return ret;}
+    if (**cursor == '0')
+    {
+        (*cursor)++;
+        if (pjson_util_is_number(**cursor))
+            {ret.code = 100; ret.msg = "Err: Invalid leading zero(s)"; return ret;}
+    }
+    else
+    {
+        (*cursor)++;
+        while (pjson_util_is_number(**cursor))
+            (*cursor)++;
+    }
+
+    /*可选小数部分判断*/
+    if (**cursor == '.')
+    {
+        (*cursor)++;
+        if (!pjson_util_is_number(**cursor))
+            {ret.code = 100; ret.msg = "Err: min 1 digit"; return ret;}
+        while (pjson_util_is_number(**cursor))
+            (*cursor)++;
+    }
+
+    /*可选指数部分判断*/
+    if (**cursor == 'e' || **cursor == 'E')
+    {
+        (*cursor)++;
+        if (**cursor == '+' || **cursor == '-')
+            (*cursor)++;
+        if (!pjson_util_is_number(**cursor))
+            {ret.code = 100; ret.msg = "Err: min 1 digit"; return ret;}
+        while (pjson_util_is_number(**cursor))
+            (*cursor)++;
+    }
+
+    ret.code = 0;
+    ret.msg = "No error detected.";
+    return ret;
+}
+
+/**
+ * @param cursor 指向目标字符串指针的指针
  * @param str 预期匹配到的字符串
  * @return 包含错误信息的结构体
  * @brief 这个函数“期望”字符串*cursor从当前位置开始可以得到完整的str字符串，如果匹配成功，返回错误码0并将*cursor光标指向
