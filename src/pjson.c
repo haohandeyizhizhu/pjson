@@ -229,6 +229,12 @@ pjson_err pjson_token_arr_append(pjson * p, token t)
     }
 }
 
+/**
+ * @param p 指向pjson对象的指针
+ * @return 包含错误信息的结构体
+ * @brief 词法分析器主函数。对p->data原始字符串进行词法分析，将token不断追加进p->token_arr动态数组
+ * 并最终以TOKEN_EOF结尾
+ */
 pjson_err pjson_lex(pjson * p)
 {
     pjson_err ret;
